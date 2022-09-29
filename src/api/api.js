@@ -9,7 +9,7 @@ const instance = axios.create({
 });
 
 export const weatherApi = {
-    getWeatherData(city = 'Moscow') {
-        return instance.get(`/forecast.json?key=b981956399fc444dbdf162056222809&q=${city}&days=7&aqi=no&alerts=no`).then(response => response.data);
+    getWeatherData(city = 'Moscow', days = '7') {
+        return instance.get(`/forecast.json?key=b981956399fc444dbdf162056222809&q=${city}&days=${days}&aqi=no&alerts=no`).then(response => response.data);
     }
 }
