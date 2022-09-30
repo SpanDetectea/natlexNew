@@ -36,7 +36,7 @@ function ViewPage() {
                       text: 'My chart'
                     },
                     series: [{
-                      data: data.map(i => i.day[item.nameEn])
+                      data: data.map(i => i[item.nameEn])
                     }]
                   }}
                 />
