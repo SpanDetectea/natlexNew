@@ -1,4 +1,4 @@
-import {SET_DATA__CONTENT, TOGGLE__LIST__ACTIVE, TOGGLE__VIEW__ACCORDION, SET__NEW__CHART} from './const'
+import {SET_DATA__CONTENT, TOGGLE__LIST__ACTIVE, TOGGLE__VIEW__ACCORDION, SET__NEW__CHART,DELETE__CHART} from './const'
 
 export const setDataContent = (data) => {
     return {type: SET_DATA__CONTENT, data}
@@ -11,4 +11,7 @@ export const toggleViewAccordion = (index) => {
 }
 export const setNewChart = (name,color,data) => {
     return {type: SET__NEW__CHART, name,color,data}
+}
+export const deleteChart = (id) => {
+    return {type: DELETE__CHART, id}
 }

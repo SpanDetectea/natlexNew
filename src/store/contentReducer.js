@@ -1,4 +1,4 @@
-import { SET_DATA__CONTENT, TOGGLE__LIST__ACTIVE, TOGGLE__VIEW__ACCORDION, SET__NEW__CHART } from './const'
+import { SET_DATA__CONTENT, TOGGLE__LIST__ACTIVE, TOGGLE__VIEW__ACCORDION, SET__NEW__CHART,DELETE__CHART } from './const'
 let initialState = {
     data: [],
     chartList: [
@@ -6,49 +6,57 @@ let initialState = {
             name: 'Прогноз максимальной температуры по Цельсию',
             isActive: true,
             isView: true,
-            nameEn: 'maxtemp_c'
+            nameEn: 'maxtemp_c',
+            color: '#dc3545'
         },
         {
             name: 'Прогноз минимальной температуры по Цельсию',
             isActive: true,
             isView: true,
-            nameEn: 'mintemp_c'
+            nameEn: 'mintemp_c',
+            color: '#0d6efd'
         },
         {
             name: 'Прогноз максимальной температуры по Фаренгейту',
             isActive: true,
             isView: true,
-            nameEn: 'maxtemp_f'
+            nameEn: 'maxtemp_f',
+            color: '#ffc107'
         },
         {
             name: 'Прогноз минимальной температуры по Фаренгейту',
             isActive: false,
             isView: true,
-            nameEn: 'mintemp_f'
+            nameEn: 'mintemp_f',
+            color: '#dc3545'
         },
         {
             name: 'Прогноз средней температуры по Цельсию',
             isActive: true,
             isView: true,
-            nameEn: 'avgtemp_c'
+            nameEn: 'avgtemp_c',
+            color: '#dc3545'
         },
         {
             name: 'Прогноз средней температуры по Фаренгейту',
             isActive: true,
             isView: true,
-            nameEn: 'avgtemp_f'
+            nameEn: 'avgtemp_f',
+            color: '#dc3545'
         },
         {
             name: 'Прогноз максимальной скорости ветра миль/час',
             isActive: true,
             isView: true,
-            nameEn: 'maxwind_mph'
+            nameEn: 'maxwind_mph',
+            color: '#dc3545'
         },
         {
             name: 'Прогноз максимальной скорости ветра километров/час',
             isActive: true,
             isView: true,
-            nameEn: 'maxwind_kph'
+            nameEn: 'maxwind_kph',
+            color: '#dc3545'
         },
     ],
     countries: [
@@ -75,7 +83,6 @@ let initialState = {
 const contentReducer = (state = initialState, action) => {
     switch (action.type) {
         case SET_DATA__CONTENT:
-            // console.log(state.data.length)
             return {
                 ...state,
                 // data: action.data.forecast.forecastday
@@ -110,23 +117,21 @@ const contentReducer = (state = initialState, action) => {
                     name: action.name,
                     isActive: true,
                     isView: true,
-                    nameEn: newProp
+                    nameEn: newProp,
+                    color: action.color
                 }],
                 id: state.id + 1,
-                // chartList: state.chartList.push({
-                //     name: action.name,
-                //     isActive: true,
-                //     isView: true,
-                //     nameEn: newProp
-                // }),
-                // data: state.data.map((item, index)=>item[newProp]=action.data[index])
                 data: state.data.map((item, index) => {
-                    // console.log(+action.data[index])
                     if (!Number.isNaN(+action.data[index])) {
                         item[newProp] = +action.data[index];
                     }
                     return item;
                 })
+            }
+        case DELETE__CHART:
+            return {
+                ...state,
+                chartList: [...state.chartList.splice(action.id,1)]
             }
         default:
             return state;

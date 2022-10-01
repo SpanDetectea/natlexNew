@@ -16,11 +16,11 @@ function ViewPage() {
   }, [])
 
   const toggleAccordion = (index) => dispatch(toggleViewAccordion(index))
-  
+
   return <div className="viewPage">
     {chartList.map((item, index) => {
       return <>
-      {item.isActive && <div className="accordion">
+        {item.isActive && <div className="accordion">
           <div className="accordion-item">
             <h2 className="accordion-header" onClick={() => toggleAccordion(index)}>
               <button className={"accordion-button" + (item.isView ? " collapsed" : "")} type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
@@ -37,14 +37,15 @@ function ViewPage() {
                     },
                     series: [{
                       data: data.map(i => i[item.nameEn])
-                    }]
+                    }],
+                    colors: [item.color],
                   }}
                 />
               </div>
             </div>
           </div>
         </div>}
-        
+
       </>
     })}
   </div>
