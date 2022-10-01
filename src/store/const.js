@@ -5,3 +5,4 @@ export const SET__NEW__CHART = 'SET__NEW__CHART';
 export const SET__NEW__COLOR = 'SET__NEW__COLOR';
 export const DELETE__CHART = 'DELETE__CHART'; 
 export const EDIT__CHART = 'EDIT__CHART'; 
+export const UPDATE__CHART = 'UPDATE__CHART'; 

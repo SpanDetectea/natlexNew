@@ -3,6 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { deleteChart, setNewChart, toggleListActive, editChartValue } from '../../store/actions';
 import { useState } from 'react';
 import FormLabel from '../../common/FormLabel/FormLabel';
+import { weatherApi } from './../../api/api';
+import { setDataContent } from './../../store/actions';
 
 function Settings() {
     const chartList = useSelector(state => state.content.chartList);
@@ -21,8 +23,12 @@ function Settings() {
     }
     const toggleActiveColor = () => setIsActiveColor(!isActiveColor)
     const delChart = (id) => dispatch(deleteChart(id))
+    const addChart = () => {
+        setstate('add');
+    }
     const editChart = (index) => {
         console.log(index)
+        !days.length ? weatherApi.getWeatherData().then(res => dispatch(setDataContent(res))) : console.log('error');
         setTitle(chartList[index].name);
         setColor(chartList[index].color);
         const nameProp = chartList[index].nameEn;
@@ -36,21 +42,21 @@ function Settings() {
             {chartList.map((item, index) => {
                 return <div className="container text-center" key={index}>
                     <div className="row">
-                        <div className="col">
+                        <div className="col-8">
                             <li key={index} onClick={() => toggleActive(index)} className={"list-group-item list-group-item-action list-group-item-info settings__list" + (item.isActive ? " active" : "")}>{item.name} </li>
                         </div>
-                        <div className="col">
+                        <div className="col-md-auto">
                             <button type="button" className="btn btn-info" onClick={()=>editChart(index)}>Edit</button>
                         </div>
-                        <div className="col">
-                            <button type="button" className="btn btn-danger" onClick={()=>delChart(index)}>Danger</button>
+                        <div className="col-md-auto">
+                            <button type="button" className="btn btn-danger" onClick={()=>delChart(index)}>Delete</button>
                         </div>
                     </div>
                 </div>
             })
             }
         </ul>
-        <button type="button" className="btn btn-primary" onClick={() => setstate('add')} data-bs-toggle="modal" data-bs-target="#exampleModal">
+        <button type="button" className="btn btn-primary" onClick={addChart} data-bs-toggle="modal" data-bs-target="#exampleModal">
             Add chart
         </button>
 
@@ -86,8 +92,8 @@ function Settings() {
 
                     </div>
                     <div className="modal-footer">
-                        <button type="button" className="btn btn-success" onClick={setNC}>Success</button>
-                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={() => setstate(!state)}>Закрыть</button>
+                        <button type="button" className="btn btn-success" onClick={setNC}>Apply</button>
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={() => setstate(!state)}>Close</button>
                     </div>
                 </div>
             </div>

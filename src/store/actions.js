@@ -1,4 +1,4 @@
-import {SET_DATA__CONTENT, TOGGLE__LIST__ACTIVE, TOGGLE__VIEW__ACCORDION, SET__NEW__CHART,DELETE__CHART, EDIT__CHART} from './const'
+import {SET_DATA__CONTENT, TOGGLE__LIST__ACTIVE, TOGGLE__VIEW__ACCORDION, SET__NEW__CHART,DELETE__CHART, EDIT__CHART, UPDATE__CHART} from './const'
 
 export const setDataContent = (data) => {
     return {type: SET_DATA__CONTENT, data}
@@ -17,4 +17,7 @@ export const deleteChart = (id) => {
 }
 export const editChartValue = (name,color,data, id) => {
     return {type: EDIT__CHART, name,color,data, id}
+}
+export const updateChart = (name,color,data, id) => {
+    return {type: UPDATE__CHART, name,color,data, id}
 }

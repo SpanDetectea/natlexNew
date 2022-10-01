@@ -1,4 +1,4 @@
-import { SET_DATA__CONTENT, TOGGLE__LIST__ACTIVE, TOGGLE__VIEW__ACCORDION, SET__NEW__CHART,DELETE__CHART, EDIT__CHART } from './const'
+import { SET_DATA__CONTENT, TOGGLE__LIST__ACTIVE, TOGGLE__VIEW__ACCORDION, SET__NEW__CHART,DELETE__CHART, EDIT__CHART, UPDATE__CHART } from './const'
 let initialState = {
     data: [],
     chartList: [
@@ -134,7 +134,6 @@ const contentReducer = (state = initialState, action) => {
                 chartList: [...state.chartList.slice(0, action.id), ...state.chartList.slice(action.id+1,state.chartList.length)]
             }
         case EDIT__CHART:
-            console.log(action.name,action.color,action.data,action.id)
             return {
                 ...state,
                 chartList: state.chartList.map((item, i)=>{
@@ -144,6 +143,14 @@ const contentReducer = (state = initialState, action) => {
                     }
                     return item;
                 }),
+                data: state.data.map((item, i) => {
+                  item[state.chartList[action.id].nameEn]=+action.data[i]
+                  return item;  
+                })
+            }
+        case UPDATE__CHART:
+            return {
+                ...state,
                 data: state.data.map((item, i) => {
                   item[state.chartList[action.id].nameEn]=+action.data[i]
                   return item;  
