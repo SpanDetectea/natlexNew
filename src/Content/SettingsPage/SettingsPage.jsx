@@ -1,11 +1,12 @@
 import './SettingsPage.scss'
 import { useSelector, useDispatch } from 'react-redux';
-import { setNewChart, toggleListActive } from '../../store/actions';
+import { deleteChart, setNewChart, toggleListActive, editChartValue } from '../../store/actions';
 import { useState } from 'react';
 import FormLabel from '../../common/FormLabel/FormLabel';
 
 function Settings() {
     const chartList = useSelector(state => state.content.chartList);
+    const days = useSelector(state => state.content.data);
     const dispatch = useDispatch();
     const [title, setTitle] = useState('New Chart')
     const [color, setColor] = useState('#6c757d')
@@ -15,29 +16,41 @@ function Settings() {
 
     const toggleActive = (index) => dispatch(toggleListActive(index))
     const setNC = () => {
-        dispatch(setNewChart(title, color, data.split(',')))
-        setstate(!state)
+        state==='add' ? dispatch(setNewChart(title, color, data.split(','))) : dispatch(editChartValue(title, color, Array.isArray(data) ? data : data.split(','), state))
+        setstate(false)
     }
     const toggleActiveColor = () => setIsActiveColor(!isActiveColor)
+    const delChart = (id) => dispatch(deleteChart(id))
+    const editChart = (index) => {
+        console.log(index)
+        setTitle(chartList[index].name);
+        setColor(chartList[index].color);
+        const nameProp = chartList[index].nameEn;
+        const dayData = days.map(item=>item[nameProp])
+        setData(dayData);
+        setstate(`${index}`)
+    }
 
     return <div className="settings container-sm">
         <ul className="list-group">
-            {chartList.map((item, index) => <li key={index} onClick={() => toggleActive(index)} className={"list-group-item list-group-item-action list-group-item-info settings__list" + (item.isActive ? " active" : "")}>{item.name} <button type="button" className="btn btn-danger">Danger</button></li>)}
-            {/* {chartList.map((item, index) => {
-                return <div className="container text-center">
+            {chartList.map((item, index) => {
+                return <div className="container text-center" key={index}>
                     <div className="row">
                         <div className="col">
                             <li key={index} onClick={() => toggleActive(index)} className={"list-group-item list-group-item-action list-group-item-info settings__list" + (item.isActive ? " active" : "")}>{item.name} </li>
                         </div>
                         <div className="col">
-                            <button type="button" className="btn btn-danger">Danger</button>)
+                            <button type="button" className="btn btn-info" onClick={()=>editChart(index)}>Edit</button>
+                        </div>
+                        <div className="col">
+                            <button type="button" className="btn btn-danger" onClick={()=>delChart(index)}>Danger</button>
                         </div>
                     </div>
                 </div>
             })
-            } */}
+            }
         </ul>
-        <button type="button" className="btn btn-primary" onClick={() => setstate(!state)} data-bs-toggle="modal" data-bs-target="#exampleModal">
+        <button type="button" className="btn btn-primary" onClick={() => setstate('add')} data-bs-toggle="modal" data-bs-target="#exampleModal">
             Add chart
         </button>
 

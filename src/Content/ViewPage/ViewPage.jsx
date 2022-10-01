@@ -1,5 +1,6 @@
 import './ViewPage.scss'
-import { useEffect } from 'react';
+import React from 'react'
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
@@ -10,16 +11,16 @@ function ViewPage() {
   const dispatch = useDispatch();
   const data = useSelector(state => state.content.data);
   const chartList = useSelector(state => state.content.chartList);
-
+  const [countDay, setCountDay] = useState('7');
   useEffect(() => {
-    weatherApi.getWeatherData().then(res => dispatch(setDataContent(res)));
+    !data.length ? weatherApi.getWeatherData('Moscow', countDay).then(res => dispatch(setDataContent(res))) : console.log();
   }, [])
 
   const toggleAccordion = (index) => dispatch(toggleViewAccordion(index))
 
   return <div className="viewPage">
     {chartList.map((item, index) => {
-      return <>
+      return <React.Fragment key={index}>
         {item.isActive && <div className="accordion">
           <div className="accordion-item">
             <h2 className="accordion-header" onClick={() => toggleAccordion(index)}>
@@ -45,9 +46,10 @@ function ViewPage() {
             </div>
           </div>
         </div>}
-
-      </>
+      </React.Fragment>
     })}
+            <label htmlFor="customRange2" className="form-label">Пример диапазона</label>
+        <input type="range" className="form-range" min="0" max="5" id="customRange2" value={countDay} onChange={(e)=>setCountDay(e.target.value)} />
   </div>
 }
 

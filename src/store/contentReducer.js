@@ -1,4 +1,4 @@
-import { SET_DATA__CONTENT, TOGGLE__LIST__ACTIVE, TOGGLE__VIEW__ACCORDION, SET__NEW__CHART,DELETE__CHART } from './const'
+import { SET_DATA__CONTENT, TOGGLE__LIST__ACTIVE, TOGGLE__VIEW__ACCORDION, SET__NEW__CHART,DELETE__CHART, EDIT__CHART } from './const'
 let initialState = {
     data: [],
     chartList: [
@@ -86,8 +86,8 @@ const contentReducer = (state = initialState, action) => {
             return {
                 ...state,
                 // data: action.data.forecast.forecastday
-                // data: action.data.forecast.forecastday.map(item => item.day)
-                data: state.data.length ? state.data : action.data.forecast.forecastday.map(item => item.day)
+                data: action.data.forecast.forecastday.map(item => item.day)
+                // data: state.data.length ? state.data : action.data.forecast.forecastday.map(item => item.day)
             }
         case TOGGLE__LIST__ACTIVE:
             return {
@@ -131,7 +131,23 @@ const contentReducer = (state = initialState, action) => {
         case DELETE__CHART:
             return {
                 ...state,
-                chartList: [...state.chartList.splice(action.id,1)]
+                chartList: [...state.chartList.slice(0, action.id), ...state.chartList.slice(action.id+1,state.chartList.length)]
+            }
+        case EDIT__CHART:
+            console.log(action.name,action.color,action.data,action.id)
+            return {
+                ...state,
+                chartList: state.chartList.map((item, i)=>{
+                    if (i===+action.id) {
+                        item.color=action.color;
+                        item.name=action.name;
+                    }
+                    return item;
+                }),
+                data: state.data.map((item, i) => {
+                  item[state.chartList[action.id].nameEn]=+action.data[i]
+                  return item;  
+                })
             }
         default:
             return state;
