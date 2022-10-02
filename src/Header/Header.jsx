@@ -1,23 +1,24 @@
 
-import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import {  useEffect } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 import './Header.scss'
+import { weatherApi } from './../api/api';
+import { useDispatch, useSelector } from 'react-redux';
+import { setDataContent } from './../store/actions';
 
 
 function Header() {
-    const [state, setState] = useState('1')
-    return <div className="header btn-group">
-        {/* <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked />
-        <NavLink to='/view'><label class="btn btn-outline-primary lol" for="btnradio1">View Move</label></NavLink>
+    const location = useLocation();
+    const data = useSelector(state => state.content.data);
 
-        <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" />
-        <NavLink to='/settings'><label class="btn btn-outline-primary lol" for="btnradio2">Settings</label></NavLink> */}
-        <NavLink to='/view'><button type="button" class={"btn btn-primary"+(state==='1'?' lol': '')} onClick={()=>setState('1')}>View Move</button></NavLink>
-        <NavLink to='/settings'><button type="button" class={"btn btn-primary"+(state==='2'?' lol': '')} onClick={()=>setState('2')}>Settings</button></NavLink>
-        {/* <button type="button" class="btn btn-primary">Левая</button> */}
-        
-        {/* <NavLink to='/view'>View Move</NavLink>
-        <NavLink to='/settings'>Settings</NavLink> */}
+    const dispatch=useDispatch();
+    useEffect(() => {
+        !data.length ? weatherApi.getWeatherData().then(res => dispatch(setDataContent(res))) : console.log();
+    }, [])
+
+    return <div className="header btn-group my-4">
+        <NavLink to='/view'><button type="button" className={"btn btn-primary header__button" + (location.pathname === '/view' ? ' activeBtn' : '')}>View Move</button></NavLink>
+        <NavLink to='/settings'><button type="button" className={"btn btn-primary header__button" + (location.pathname === '/settings' ? ' activeBtn' : '')}>Settings</button></NavLink>
     </div>
 }
 

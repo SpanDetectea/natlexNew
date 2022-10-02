@@ -1,22 +1,23 @@
 import './ViewPage.scss'
 import React from 'react'
-import { useEffect, useState } from 'react';
+import {  useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import { weatherApi } from './../../api/api';
-import { setDataContent, toggleViewAccordion } from './../../store/actions';
+import { toggleViewAccordion, updateChart } from './../../store/actions';
 
 function ViewPage() {
   const dispatch = useDispatch();
   const data = useSelector(state => state.content.data);
   const chartList = useSelector(state => state.content.chartList);
   const [countDay, setCountDay] = useState('7');
-  useEffect(() => {
-    !data.length ? weatherApi.getWeatherData('Moscow', countDay).then(res => dispatch(setDataContent(res))) : console.log();
-  }, [])
 
   const toggleAccordion = (index) => dispatch(toggleViewAccordion(index))
+  const setDataFromRange = (e) => {
+    setCountDay(e.target.value)
+    weatherApi.getWeatherData('Moscow', e.target.value).then(res => dispatch(updateChart(res)))
+  }
 
   return <div className="viewPage">
     {chartList.map((item, index) => {
@@ -34,12 +35,19 @@ function ViewPage() {
                   highcharts={Highcharts}
                   options={{
                     title: {
-                      text: 'My chart'
+                      text: item.name
                     },
                     series: [{
                       data: data.map(i => i[item.nameEn])
                     }],
                     colors: [item.color],
+                    xAxis: {
+                      categories: chartList.map((item,index)=>index+1)
+                  },
+                  chart: {
+                    // renderTo: 'container',
+                    type: item.type
+                },
                   }}
                 />
               </div>
@@ -48,8 +56,8 @@ function ViewPage() {
         </div>}
       </React.Fragment>
     })}
-            <label htmlFor="customRange2" className="form-label">Пример диапазона</label>
-        <input type="range" className="form-range" min="0" max="5" id="customRange2" value={countDay} onChange={(e)=>setCountDay(e.target.value)} />
+            <label htmlFor="customRange2" className="form-label">number of days from 1 to 7</label>
+        <input type="range" className="form-range" min="1" max="7" id="customRange2" value={countDay} onChange={(e)=> setDataFromRange(e)} />
   </div>
 }
 

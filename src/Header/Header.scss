@@ -1,7 +1,10 @@
-.header {
-    height: 70px;
-    // background-color: lightcoral;
-    .lol {
-        background: red;
+.header { 
+    &__button {
+        background: none !important;
+        color: black !important;
+    }
+    .activeBtn {
+        background: #0d6efd !important;
+        color: white !important;
     }
 }

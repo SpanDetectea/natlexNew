@@ -2,37 +2,41 @@ import './SettingsPage.scss'
 import { useSelector, useDispatch } from 'react-redux';
 import { deleteChart, setNewChart, toggleListActive, editChartValue } from '../../store/actions';
 import { useState } from 'react';
-import FormLabel from '../../common/FormLabel/FormLabel';
-import { weatherApi } from './../../api/api';
-import { setDataContent } from './../../store/actions';
+import useWindowDimensions from '../../Hooks/windowDimensions/windowDimensions';
 
 function Settings() {
     const chartList = useSelector(state => state.content.chartList);
     const days = useSelector(state => state.content.data);
     const dispatch = useDispatch();
-    const [title, setTitle] = useState('New Chart')
+    const [title, setTitle] = useState('')
     const [color, setColor] = useState('#6c757d')
-    const [data, setData] = useState('0,1,2')
+    const [data, setData] = useState('')
+    const [type, setType] = useState('line')
     const [isActiveColor, setIsActiveColor] = useState(false);
     const [state, setstate] = useState(false)
+    const { height, width } = useWindowDimensions();
 
     const toggleActive = (index) => dispatch(toggleListActive(index))
     const setNC = () => {
-        state==='add' ? dispatch(setNewChart(title, color, data.split(','))) : dispatch(editChartValue(title, color, Array.isArray(data) ? data : data.split(','), state))
+        console.log('setNc')
+        console.log(state)
+        state === 'add' ? dispatch(setNewChart(title, color, data.split(','),type)) : dispatch(editChartValue(title, color, Array.isArray(data) ? data : data.split(','), state,type))
         setstate(false)
     }
     const toggleActiveColor = () => setIsActiveColor(!isActiveColor)
     const delChart = (id) => dispatch(deleteChart(id))
     const addChart = () => {
         setstate('add');
+        setTitle('')
+        setData('')
+        setColor('#6c757d')
     }
     const editChart = (index) => {
-        console.log(index)
-        !days.length ? weatherApi.getWeatherData().then(res => dispatch(setDataContent(res))) : console.log('error');
         setTitle(chartList[index].name);
         setColor(chartList[index].color);
+        setType(chartList[index].type)
         const nameProp = chartList[index].nameEn;
-        const dayData = days.map(item=>item[nameProp])
+        const dayData = days.map(item => item[nameProp])
         setData(dayData);
         setstate(`${index}`)
     }
@@ -40,23 +44,40 @@ function Settings() {
     return <div className="settings container-sm">
         <ul className="list-group">
             {chartList.map((item, index) => {
-                return <div className="container text-center" key={index}>
-                    <div className="row">
-                        <div className="col-8">
+                return <div className="container text-center my-2" key={index}>
+                    {width >= '770' && <div className="row">
+                        <div className="col">
                             <li key={index} onClick={() => toggleActive(index)} className={"list-group-item list-group-item-action list-group-item-info settings__list" + (item.isActive ? " active" : "")}>{item.name} </li>
                         </div>
-                        <div className="col-md-auto">
-                            <button type="button" className="btn btn-info" onClick={()=>editChart(index)}>Edit</button>
+                        <div className="col-md-auto ms-auto">
+                            <button type="button" className="btn btn-info" onClick={() => editChart(index)}>Edit</button>
                         </div>
-                        <div className="col-md-auto">
-                            <button type="button" className="btn btn-danger" onClick={()=>delChart(index)}>Delete</button>
+                        <div className="col-md-auto ms-auto">
+                            <button type="button" className="btn btn-danger" onClick={() => delChart(index)}>Delete</button>
                         </div>
                     </div>
+                    }
+                    {width < '770' && <>
+                        <div className="row">
+                            <div className="col">
+                                <li key={index} onClick={() => toggleActive(index)} className={"list-group-item list-group-item-action list-group-item-info settings__list" + (item.isActive ? " active" : "")}>{item.name} </li>
+                            </div>
+                        </div>
+                        <div className="row justify-content-between mt-2">
+                            <div className="col-4">
+                                <button type="button" className="btn btn-info" onClick={() => editChart(index)}>Edit</button>
+                            </div>
+                            <div className="col-4">
+                                <button type="button" className="btn btn-danger" onClick={() => delChart(index)}>Delete</button>
+                            </div>
+                        </div>
+                    </>
+                    }
                 </div>
             })
             }
-        </ul>
-        <button type="button" className="btn btn-primary" onClick={addChart} data-bs-toggle="modal" data-bs-target="#exampleModal">
+        </ul >
+        <button type="button" className="btn btn-primary mt-4" onClick={addChart} data-bs-toggle="modal" data-bs-target="#exampleModal">
             Add chart
         </button>
 
@@ -71,11 +92,11 @@ function Settings() {
 
                         <label className="form-label">Chart title</label>
                         <div className="input-group mb-3">
-                            <input type="text" className="form-control" aria-describedby="basic-addon3" value={title} onInput={(e) => setTitle(e.target.value)} />
+                            <input type="text" className="form-control" aria-describedby="basic-addon3" value={title} onInput={(e) => setTitle(e.target.value)} placeholder='my new chart' />
                         </div>
                         <label className="form-label">Data</label>
                         <div className="input-group mb-3">
-                            <input type="text" className="form-control" aria-describedby="basic-addon3" value={data} onInput={(e) => setData(e.target.value)} />
+                            <input type="text" className="form-control" aria-describedby="basic-addon3" value={data} onInput={(e) => setData(e.target.value)} placeholder='1,2,3,4' />
                         </div>
 
                         <div className="dropdown-center">
@@ -89,6 +110,12 @@ function Settings() {
                                 <li><a className="dropdown-item bg-warning" href="#" onClick={() => setColor('#ffc107')}>Yellow</a></li>
                             </ul>
                         </div>
+                        <div className="btn-group my-2" role="group" aria-label="Базовая группа переключателей радио">
+                            <input type="radio" className="btn-check" name="btnradio" id="btnradio1" autoComplete="off" checked={type === 'line' ? true : false} />
+                            <label className="btn btn-outline-primary" htmlFor="btnradio1" onClick={()=>setType('line')}>Line</label>
+                            <input type="radio" className="btn-check" name="btnradio" id="btnradio2" autoComplete="off" checked={type === 'column' ? true : false} />
+                            <label className="btn btn-outline-primary" htmlFor="btnradio2" onClick={()=>setType('column')}>Column</label>
+                        </div>
 
                     </div>
                     <div className="modal-footer">
@@ -98,7 +125,7 @@ function Settings() {
                 </div>
             </div>
         </div>
-    </div>
+    </div >
 }
 
 export default Settings;

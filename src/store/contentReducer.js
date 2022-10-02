@@ -1,4 +1,4 @@
-import { SET_DATA__CONTENT, TOGGLE__LIST__ACTIVE, TOGGLE__VIEW__ACCORDION, SET__NEW__CHART,DELETE__CHART, EDIT__CHART, UPDATE__CHART } from './const'
+import { SET_DATA__CONTENT, TOGGLE__LIST__ACTIVE, TOGGLE__VIEW__ACCORDION, SET__NEW__CHART, DELETE__CHART, EDIT__CHART, UPDATE__CHART } from './const'
 let initialState = {
     data: [],
     chartList: [
@@ -7,56 +7,64 @@ let initialState = {
             isActive: true,
             isView: true,
             nameEn: 'maxtemp_c',
-            color: '#dc3545'
+            color: '#dc3545',
+            type: 'line'
         },
         {
             name: 'Прогноз минимальной температуры по Цельсию',
             isActive: true,
             isView: true,
             nameEn: 'mintemp_c',
-            color: '#0d6efd'
+            color: '#0d6efd',
+            type: 'column'
         },
         {
             name: 'Прогноз максимальной температуры по Фаренгейту',
             isActive: true,
             isView: true,
             nameEn: 'maxtemp_f',
-            color: '#ffc107'
+            color: '#ffc107',
+            type: 'line'
         },
         {
             name: 'Прогноз минимальной температуры по Фаренгейту',
             isActive: false,
             isView: true,
             nameEn: 'mintemp_f',
-            color: '#dc3545'
+            color: '#dc3545',
+            type: 'line'
         },
         {
             name: 'Прогноз средней температуры по Цельсию',
             isActive: true,
             isView: true,
             nameEn: 'avgtemp_c',
-            color: '#dc3545'
+            color: '#dc3545',
+            type: 'line'
         },
         {
             name: 'Прогноз средней температуры по Фаренгейту',
             isActive: true,
             isView: true,
             nameEn: 'avgtemp_f',
-            color: '#dc3545'
+            color: '#dc3545',
+            type: 'line'
         },
         {
             name: 'Прогноз максимальной скорости ветра миль/час',
             isActive: true,
             isView: true,
             nameEn: 'maxwind_mph',
-            color: '#dc3545'
+            color: '#dc3545',
+            type: 'line'
         },
         {
             name: 'Прогноз максимальной скорости ветра километров/час',
             isActive: true,
             isView: true,
             nameEn: 'maxwind_kph',
-            color: '#dc3545'
+            color: '#dc3545',
+            type: 'line'
         },
     ],
     countries: [
@@ -77,7 +85,8 @@ let initialState = {
             nameRu: 'Воронеж'
         },
     ],
-    id: 1
+    id: 1,
+    newData: []
 }
 
 const contentReducer = (state = initialState, action) => {
@@ -111,6 +120,7 @@ const contentReducer = (state = initialState, action) => {
             }
         case SET__NEW__CHART:
             let newProp = `newProp${state.id}`;
+            console.log('dsadasd')
             return {
                 ...state,
                 chartList: [...state.chartList, {
@@ -118,7 +128,8 @@ const contentReducer = (state = initialState, action) => {
                     isActive: true,
                     isView: true,
                     nameEn: newProp,
-                    color: action.color
+                    color: action.color,
+                    type: action.t
                 }],
                 id: state.id + 1,
                 data: state.data.map((item, index) => {
@@ -126,35 +137,58 @@ const contentReducer = (state = initialState, action) => {
                         item[newProp] = +action.data[index];
                     }
                     return item;
-                })
+                }),
+                newData: [...state.newData, {
+                    nameEn: newProp,
+                    data: [...state.data.map(item => item[newProp])]
+                }]
+                // newData: [...state.newData.push({
+                //     nameEn: newProp,
+                //     data: [...state.data.map(item=>item[newProp])]
+                // })]
             }
         case DELETE__CHART:
             return {
                 ...state,
-                chartList: [...state.chartList.slice(0, action.id), ...state.chartList.slice(action.id+1,state.chartList.length)]
+                chartList: [...state.chartList.slice(0, action.id), ...state.chartList.slice(action.id + 1, state.chartList.length)]
             }
         case EDIT__CHART:
             return {
                 ...state,
-                chartList: state.chartList.map((item, i)=>{
-                    if (i===+action.id) {
-                        item.color=action.color;
-                        item.name=action.name;
+                chartList: state.chartList.map((item, i) => {
+                    if (i === +action.id) {
+                        item.color = action.color;
+                        item.name = action.name;
+                        item.type = action.t;
                     }
                     return item;
                 }),
                 data: state.data.map((item, i) => {
-                  item[state.chartList[action.id].nameEn]=+action.data[i]
-                  return item;  
+                    item[state.chartList[action.id].nameEn] = +action.data[i]
+                    return item;
                 })
             }
         case UPDATE__CHART:
+            let days = action.data.forecast.forecastday.map(item => item.day);
+            // console.log(days)
+            // console.log(days.map(item=>item))
             return {
                 ...state,
-                data: state.data.map((item, i) => {
-                  item[state.chartList[action.id].nameEn]=+action.data[i]
-                  return item;  
+                data: days.map((item, index) => {
+                    // console.log(item)
+                    if (state.newData.length) {
+                        // console.log(state.newData)
+                        state.newData.map(i => {
+                            return item[i.nameEn] = i.data[index]
+                        })
+                    }
+                    console.log(item)
+                    return item
                 })
+                // data: state.data.map((item, index)=>{
+                //     console.log(action.data.forecast.forecastday[index].day);
+                //     return Object.assign(item, action.data.forecast.forecastday[index].day)
+                // })
             }
         default:
             return state;
