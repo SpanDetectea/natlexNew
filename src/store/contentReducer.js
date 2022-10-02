@@ -67,24 +67,6 @@ let initialState = {
             type: 'line'
         },
     ],
-    countries: [
-        {
-            nameEn: 'London',
-            nameRu: 'Лондон'
-        },
-        {
-            nameEn: 'Moscow',
-            nameRu: 'Москва'
-        },
-        {
-            nameEn: 'Petrozavodsk',
-            nameRu: 'Петрозаводск'
-        },
-        {
-            nameEn: 'Voronezh',
-            nameRu: 'Воронеж'
-        },
-    ],
     id: 1,
     newData: []
 }
@@ -94,9 +76,7 @@ const contentReducer = (state = initialState, action) => {
         case SET_DATA__CONTENT:
             return {
                 ...state,
-                // data: action.data.forecast.forecastday
                 data: action.data.forecast.forecastday.map(item => item.day)
-                // data: state.data.length ? state.data : action.data.forecast.forecastday.map(item => item.day)
             }
         case TOGGLE__LIST__ACTIVE:
             return {
@@ -120,7 +100,6 @@ const contentReducer = (state = initialState, action) => {
             }
         case SET__NEW__CHART:
             let newProp = `newProp${state.id}`;
-            console.log('dsadasd')
             return {
                 ...state,
                 chartList: [...state.chartList, {
@@ -142,10 +121,6 @@ const contentReducer = (state = initialState, action) => {
                     nameEn: newProp,
                     data: [...state.data.map(item => item[newProp])]
                 }]
-                // newData: [...state.newData.push({
-                //     nameEn: newProp,
-                //     data: [...state.data.map(item=>item[newProp])]
-                // })]
             }
         case DELETE__CHART:
             return {
@@ -170,25 +145,16 @@ const contentReducer = (state = initialState, action) => {
             }
         case UPDATE__CHART:
             let days = action.data.forecast.forecastday.map(item => item.day);
-            // console.log(days)
-            // console.log(days.map(item=>item))
             return {
                 ...state,
                 data: days.map((item, index) => {
-                    // console.log(item)
                     if (state.newData.length) {
-                        // console.log(state.newData)
                         state.newData.map(i => {
                             return item[i.nameEn] = i.data[index]
                         })
                     }
-                    console.log(item)
                     return item
                 })
-                // data: state.data.map((item, index)=>{
-                //     console.log(action.data.forecast.forecastday[index].day);
-                //     return Object.assign(item, action.data.forecast.forecastday[index].day)
-                // })
             }
         default:
             return state;

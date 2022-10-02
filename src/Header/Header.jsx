@@ -1,4 +1,3 @@
-
 import {  useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import './Header.scss'
@@ -13,7 +12,9 @@ function Header() {
 
     const dispatch=useDispatch();
     useEffect(() => {
-        !data.length ? weatherApi.getWeatherData().then(res => dispatch(setDataContent(res))) : console.log();
+        if (!data.length) {
+            weatherApi.getWeatherData().then(res => dispatch(setDataContent(res)))
+        }
     }, [])
 
     return <div className="header btn-group my-4">
