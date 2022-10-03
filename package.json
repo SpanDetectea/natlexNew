@@ -2,6 +2,7 @@
   "name": "natlex",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://spandetectea.github.io/natlex",
   "dependencies": {
     "@redux-devtools/extension": "^3.2.3",
     "@reduxjs/toolkit": "^1.8.5",
@@ -29,6 +30,8 @@
     "webpack-cli": "^4.10.0"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -54,6 +57,7 @@
   },
   "devDependencies": {
     "awesome-typescript-loader": "^5.2.1",
+    "gh-pages": "^4.0.0",
     "typescript": "^4.8.4"
   }
 }
