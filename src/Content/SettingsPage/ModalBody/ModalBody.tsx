@@ -1,18 +1,31 @@
+import React from "react";
 
+interface IModalBody {
+    setChartTitle: (value: string) => void;
+    title: string;
+    data: string;
+    setChartData: (value: string) => void;
+    toggleActiveColor: () => void;
+    setChartColor: (value: string) => void;
+    type: string;
+    setChartType: (value: string) => void;
+    color: string;
+    isActiveColor: boolean;
+}
 
 function ModalBody({ setChartTitle, title, data, setChartData,
-                     toggleActiveColor, setChartColor, type, 
-                     setChartType,color,isActiveColor 
-                    }) {
+    toggleActiveColor, setChartColor, type,
+    setChartType, color, isActiveColor
+}: IModalBody) {
     return <div className="modal-body">
 
         <label className="form-label">Chart title</label>
         <div className="input-group mb-3">
-            <input type="text" className="form-control" aria-describedby="basic-addon3" value={title} onInput={(e) => setChartTitle(e.target.value)} placeholder='my new chart' />
+            <input type="text" className="form-control" aria-describedby="basic-addon3" value={title} onInput={(e) => setChartTitle((e.target as HTMLInputElement).value)} placeholder='my new chart' />
         </div>
         <label className="form-label">Data</label>
         <div className="input-group mb-3">
-            <input type="text" className="form-control" aria-describedby="basic-addon3" value={data} onInput={(e) => setChartData(e.target.value)} placeholder='1,2,3,4' />
+            <input type="text" className="form-control" aria-describedby="basic-addon3" value={data} onInput={(e) => setChartData((e.target as HTMLInputElement).value)} placeholder='1,2,3,4' />
         </div>
 
         <div className="dropdown-center">

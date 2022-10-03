@@ -1,37 +1,42 @@
+import React from 'react';
 import './SettingsPage.scss'
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { deleteChart, setNewChart, editChartValue } from '../../store/actions';
 import { useState } from 'react';
 import ChartList from './ChartList/ChartList';
 import ModalHeader from './ModalHeader/ModalHeader';
 import ModalFooter from './ModalFooter/ModalFooter';
 import ModalBody from './ModalBody/ModalBody';
+import { useTypedSelector } from '../../Hooks/useTypedSelector/useTypedSelector';
+
+type TState = string | boolean;
 
 function Settings() {
-    const chartList = useSelector(state => state.content.chartList);
-    const days = useSelector(state => state.content.data);
+    const chartList = useTypedSelector(state => state.content.chartList);
+    const days = useTypedSelector(state => state.content.data);
     const dispatch = useDispatch();
     const [title, setTitle] = useState('')
     const [color, setColor] = useState('#6c757d')
     const [data, setData] = useState('')
     const [type, setType] = useState('line')
     const [isActiveColor, setIsActiveColor] = useState(false);
-    const [state, setstate] = useState(false)
+    const [state, setstate] = useState<TState>(false)
 
     const setNC = () => {
-        state === 'add' ? dispatch(setNewChart(title, color, data.split(','), type)) : dispatch(editChartValue(title, color, Array.isArray(data) ? data : data.split(','), state, type))
+        state === 'add' ? dispatch(setNewChart(title, color, data.split(','), type)) 
+        : dispatch(editChartValue(title, color, Array.isArray(data) ? data : data.split(','), +state, type))
         setstate(false)
     }
     const toggleActiveColor = () => setIsActiveColor(!isActiveColor)
     const toggleState = () => setstate(!state);
-    const delChart = (id) => dispatch(deleteChart(id))
+    const delChart = (id?: number) => dispatch(deleteChart(id))
     const addChart = () => {
         setstate('add');
         setTitle('')
         setData('')
         setColor('#6c757d')
     }
-    const editChart = (index) => {
+    const editChart = (index?: number):void => {
         setTitle(chartList[index].name);
         setColor(chartList[index].color);
         setType(chartList[index].type)
@@ -40,10 +45,10 @@ function Settings() {
         setData(dayData);
         setstate(`${index}`)
     }
-    const setChartColor = (color) => setColor(color);
-    const setChartTitle = (value) => setTitle(value);
-    const setChartData = (value) => setData(value);
-    const setChartType = (value) => setType(value)
+    const setChartColor = (color: string) => setColor(color);
+    const setChartTitle = (value: string) => setTitle(value);
+    const setChartData = (value: string) => setData(value);
+    const setChartType = (value: string) => setType(value)
     return <div className="settings container-sm">
         <ul className="list-group">
             {chartList.map((item, index) => {
@@ -55,7 +60,7 @@ function Settings() {
             Add chart
         </button>
 
-        <div className={"modal fade" + (state ? ' show' : "")} style={state ? { display: 'block' } : null} id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div className={"modal fade" + (state ? ' show' : "")} style={state ? { display: 'block' } : null} id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div className="modal-dialog">
                 <div className="modal-content">
                     <ModalHeader toggleState={toggleState} />

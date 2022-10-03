@@ -1,4 +1,7 @@
-import { SET_DATA__CONTENT, TOGGLE__LIST__ACTIVE, TOGGLE__VIEW__ACCORDION, SET__NEW__CHART, DELETE__CHART, EDIT__CHART, UPDATE__CHART } from './const'
+import {
+    SET_DATA__CONTENT, TOGGLE__LIST__ACTIVE, TOGGLE__VIEW__ACCORDION,
+    SET__NEW__CHART, DELETE__CHART, EDIT__CHART, UPDATE__CHART
+} from './const'
 let initialState = {
     data: [],
     chartList: [

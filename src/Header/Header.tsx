@@ -1,14 +1,15 @@
+import React from 'react';
 import {  useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import './Header.scss'
-import { weatherApi } from './../api/api';
-import { useDispatch, useSelector } from 'react-redux';
-import { setDataContent } from './../store/actions';
-
+import { weatherApi } from '../api/api';
+import { useDispatch} from 'react-redux';
+import { setDataContent } from '../store/actions';
+import { useTypedSelector } from '../Hooks/useTypedSelector/useTypedSelector';
 
 function Header() {
     const location = useLocation();
-    const data = useSelector(state => state.content.data);
+    const data = useTypedSelector(state => state.content.data);
 
     const dispatch=useDispatch();
     useEffect(() => {
