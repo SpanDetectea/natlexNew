@@ -14,7 +14,7 @@ function App() {
         <Route path="/view" element = {<ViewPage/> }/>
       </Routes>
     </div>
-  ); 
+  );
 }
 
 export default App;

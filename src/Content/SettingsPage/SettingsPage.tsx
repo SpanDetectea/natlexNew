@@ -26,7 +26,6 @@ function Settings() {
         state === 'add' ? dispatch(setNewChart(title, color, data.split(','), type)) 
         : dispatch(editChartValue(title, color, Array.isArray(data) ? data : data.split(','), +state, type))
         setstate(false)
-        console.log('dsadsa')
     }
     const toggleActiveColor = () => setIsActiveColor(!isActiveColor)
     const toggleState = () => setstate(!state);
@@ -52,7 +51,7 @@ function Settings() {
     const setChartType = (value: string) => setType(value)
     return <div className="settings container-sm">
         <ul className="list-group">
-            {chartList.map((item, index:number) => {
+            {chartList.map((item, index) => {
                 return <ChartList chart={item} index={index} editChart={editChart} delChart={delChart} key={index}/>
             })
             }
@@ -71,7 +70,7 @@ function Settings() {
                         setChartColor={setChartColor} type={type} setChartType={setChartType}
                         color={color} isActiveColor={isActiveColor}
                     />
-                    <ModalFooter setNC={setNC} toggleState={toggleState} />
+                    <ModalFooter setNC={setNC} toggleState={toggleState} title={title} data={data}/>
                 </div>
             </div>
         </div>

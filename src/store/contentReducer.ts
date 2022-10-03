@@ -75,16 +75,17 @@ let initialState = {
 }
 
 const contentReducer = (state = initialState, action) => {
+    const stateCopy = JSON.parse(JSON.stringify(state));
     switch (action.type) {
         case SET_DATA__CONTENT:
             return {
-                ...state,
+                ...stateCopy,
                 data: action.data.forecast.forecastday.map(item => item.day)
             }
         case TOGGLE__LIST__ACTIVE:
             return {
-                ...state,
-                chartList: state.chartList.map((item, i) => {
+                ...stateCopy,
+                chartList: stateCopy.chartList.map((item, i) => {
                     if (i === action.index) {
                         item.isActive = !item.isActive
                     }
@@ -93,8 +94,8 @@ const contentReducer = (state = initialState, action) => {
             }
         case TOGGLE__VIEW__ACCORDION:
             return {
-                ...state,
-                chartList: state.chartList.map((item, i) => {
+                ...stateCopy,
+                chartList: stateCopy.chartList.map((item, i) => {
                     if (i === action.index) {
                         item.isView = !item.isView
                     }
@@ -104,7 +105,7 @@ const contentReducer = (state = initialState, action) => {
         case SET__NEW__CHART:
             let newProp = `newProp${state.id}`;
             return {
-                ...state,
+                ...stateCopy,
                 chartList: [...state.chartList, {
                     name: action.name,
                     isActive: true,
@@ -113,29 +114,27 @@ const contentReducer = (state = initialState, action) => {
                     color: action.color,
                     type: action.t
                 }],
-                id: state.id + 1,
-                data: state.data.map((item, index) => {
+                id: stateCopy.id + 1,
+                data: stateCopy.data.map((item, index) => {
                     if (!Number.isNaN(+action.data[index])) {
                         item[newProp] = +action.data[index];
                     }
                     return item;
                 }),
-                newData: [...state.newData, {
+                newData: [...stateCopy.newData, {
                     nameEn: newProp,
-                    data: [...state.data.map(item => item[newProp])]
+                    data: [...stateCopy.data.map(item => item[newProp])]
                 }]
             }
         case DELETE__CHART:
             return {
-                ...state,
-                chartList: [...state.chartList.slice(0, action.id), ...state.chartList.slice(action.id + 1, state.chartList.length)]
+                ...stateCopy,
+                chartList: [...stateCopy.chartList.slice(0, action.id), ...stateCopy.chartList.slice(action.id + 1, stateCopy.chartList.length)]
             }
         case EDIT__CHART:
-            console.log(typeof action.color,typeof action.name,typeof action.t,typeof action.id,typeof action.data[0])
-            console.log(action.data[0])
             return {
-                ...state,
-                chartList: state.chartList.map((item, i) => {
+                ...stateCopy,
+                chartList: stateCopy.chartList.map((item, i) => {
                     if (i === +action.id) {
                         item.color = action.color;
                         item.name = action.name;
@@ -143,18 +142,18 @@ const contentReducer = (state = initialState, action) => {
                     }
                     return item;
                 }),
-                data: state.data.map((item, i) => {
-                    item[state.chartList[action.id].nameEn] = +action.data[i]
+                data: stateCopy.data.map((item, i) => {
+                    item[stateCopy.chartList[action.id].nameEn] = +action.data[i]
                     return item;
                 })
             }
         case UPDATE__CHART:
             let days = action.data.forecast.forecastday.map(item => item.day);
             return {
-                ...state,
+                ...stateCopy,
                 data: days.map((item, index) => {
-                    if (state.newData.length) {
-                        state.newData.map(i => {
+                    if (stateCopy.newData.length) {
+                        stateCopy.newData.map(i => {
                             return item[i.nameEn] = i.data[index]
                         })
                     }
@@ -162,7 +161,7 @@ const contentReducer = (state = initialState, action) => {
                 })
             }
         default:
-            return state;
+            return stateCopy;
     }
 }
 
