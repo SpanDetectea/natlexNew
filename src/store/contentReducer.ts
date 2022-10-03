@@ -131,6 +131,8 @@ const contentReducer = (state = initialState, action) => {
                 chartList: [...state.chartList.slice(0, action.id), ...state.chartList.slice(action.id + 1, state.chartList.length)]
             }
         case EDIT__CHART:
+            console.log(typeof action.color,typeof action.name,typeof action.t,typeof action.id,typeof action.data[0])
+            console.log(action.data[0])
             return {
                 ...state,
                 chartList: state.chartList.map((item, i) => {

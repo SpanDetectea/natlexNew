@@ -16,23 +16,64 @@ export interface IChartListItem {
 function ViewPage() {
   const chartList = useTypedSelector(state => state.content.chartList);
 
-  return <div className="viewPage">
-    {chartList.map((item: IChartListItem, index: number) => {
-      return <React.Fragment key={index}>
-        {item.isActive && <div className="accordion">
-          <div className="accordion-item">
-            <AccordionHeader chart={item} index={index} />
-            <div className={"accordion-collapse collapse" + (item.isView ? "" : "show")} aria-labelledby="panelsStayOpen-headingOne">
-              <div className="accordion-body">
-                <HighChart chart={item} />
-              </div>
-            </div>
-          </div>
-        </div>}
-      </React.Fragment>
-    })}
-    <Range />
+  // return <div className="viewPage">
+  //   {chartList.map((item: IChartListItem, index: number) => {
+  //     return <React.Fragment key={index}>
+  //       {item.isActive && <div className="accordion">
+  //         <div className="accordion-item">
+  //           <AccordionHeader chart={item} index={index} />
+  //           <div className={"accordion-collapse collapse" + (item.isView ? "" : "show")} aria-labelledby="panelsStayOpen-headingOne">
+  //             <div className="accordion-body">
+  //               <HighChart chart={item} />
+  //             </div>
+  //           </div>
+  //         </div>
+  //       </div>}
+  //     </React.Fragment>
+  //   })}
+  //   <Range />
+  // </div>
+  return <div className="container text-center">
+    <div className="row">
+      <div className="col">
+        <div className="viewPage">
+          {chartList.map((item: IChartListItem, index: number) => {
+            return <React.Fragment key={index}>
+              {item.isActive && <div className="accordion">
+                <div className="accordion-item">
+                  <AccordionHeader chart={item} index={index} />
+                  <div className={"accordion-collapse collapse" + (item.isView ? "" : "show")} aria-labelledby="panelsStayOpen-headingOne">
+                    <div className="accordion-body">
+                      <HighChart chart={item} />
+                    </div>
+                  </div>
+                </div>
+              </div>}
+            </React.Fragment>
+          })}
+        </div>    </div>
+      <div className="col">
+        <Range />
+      </div>
+    </div>
   </div>
+  // return <div className="viewPage">
+  //   {chartList.map((item: IChartListItem, index: number) => {
+  //     return <React.Fragment key={index}>
+  //       {item.isActive && <div className="accordion">
+  //         <div className="accordion-item">
+  //           <AccordionHeader chart={item} index={index} />
+  //           <div className={"accordion-collapse collapse" + (item.isView ? "" : "show")} aria-labelledby="panelsStayOpen-headingOne">
+  //             <div className="accordion-body">
+  //               <HighChart chart={item} />
+  //             </div>
+  //           </div>
+  //         </div>
+  //       </div>}
+  //     </React.Fragment>
+  //   })}
+  //   <Range />
+  // </div>
 }
 
 export default ViewPage;
