@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/natlexNew/static/css/main.6458c8cf.css",
-    "main.js": "/natlexNew/static/js/main.b322ced6.js",
-    "static/js/787.5c09420c.chunk.js": "/natlexNew/static/js/787.5c09420c.chunk.js",
+    "main.js": "/natlexNew/static/js/main.e3f655cb.js",
+    "static/js/787.0893e0ea.chunk.js": "/natlexNew/static/js/787.0893e0ea.chunk.js",
     "index.html": "/natlexNew/index.html",
     "main.6458c8cf.css.map": "/natlexNew/static/css/main.6458c8cf.css.map",
-    "main.b322ced6.js.map": "/natlexNew/static/js/main.b322ced6.js.map",
-    "787.5c09420c.chunk.js.map": "/natlexNew/static/js/787.5c09420c.chunk.js.map"
+    "main.e3f655cb.js.map": "/natlexNew/static/js/main.e3f655cb.js.map",
+    "787.0893e0ea.chunk.js.map": "/natlexNew/static/js/787.0893e0ea.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.6458c8cf.css",
-    "static/js/main.b322ced6.js"
+    "static/js/main.e3f655cb.js"
   ]
 }
