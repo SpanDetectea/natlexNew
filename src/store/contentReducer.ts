@@ -1,9 +1,19 @@
-import {
-    SET_DATA__CONTENT, TOGGLE__LIST__ACTIVE, TOGGLE__VIEW__ACCORDION,
-    SET__NEW__CHART, DELETE__CHART, EDIT__CHART, UPDATE__CHART
-} from './const'
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { Forecastday } from '../types/types';
+
+export interface IChartList {
+    name: string
+    isActive: boolean
+    isView: boolean
+    nameEn: string
+    color: string
+    type: string
+}
+export interface IAddNEwChart extends IChartList {
+    data: string
+}
 let initialState = {
-    data: [],
+    forecastDays: [] as Forecastday[],
     chartList: [
         {
             name: 'Прогноз максимальной температуры по Цельсию',
@@ -71,98 +81,71 @@ let initialState = {
         },
     ],
     id: 1,
-    newData: []
+    dates: [''],
+    viewCount: 7
+}
+interface IEditChart {
+    id: number
+    name: string
+    color: string
+    type: string
+    data: string
 }
 
-const contentReducer = (state = initialState, action) => {
-    const stateCopy = JSON.parse(JSON.stringify(state));
-    switch (action.type) {
-        case SET_DATA__CONTENT:
-            return {
-                ...stateCopy,
-                data: action.data.forecast.forecastday.map(item => item.day)
-            }
-        case TOGGLE__LIST__ACTIVE:
-            return {
-                ...stateCopy,
-                chartList: stateCopy.chartList.map((item, i) => {
-                    if (i === action.index) {
-                        item.isActive = !item.isActive
-                    }
-                    return item
-                })
-            }
-        case TOGGLE__VIEW__ACCORDION:
-            return {
-                ...stateCopy,
-                chartList: stateCopy.chartList.map((item, i) => {
-                    if (i === action.index) {
-                        item.isView = !item.isView
-                    }
-                    return item
-                })
-            }
-        case SET__NEW__CHART:
+const contentReducer = createSlice({
+    name: 'content',
+    initialState,
+    reducers: {
+        setForecastDays: (state, { payload }: PayloadAction<Forecastday[]>) => {
+            console.log(payload)
+            state.dates = payload.map(item => item.date.slice(5).replace('-', '.'))
+            state.forecastDays = [...payload]
+        },
+        toggleViewAccordion: (state, { payload }: PayloadAction<number>) => {
+            state.chartList[payload].isView = !state.chartList[payload].isView
+        },
+        toggleListActive: (state, { payload }: PayloadAction<number>) => {
+            state.chartList[payload].isActive = !state.chartList[payload].isActive
+        },
+        addNewChart: (state, { payload }: PayloadAction<IAddNEwChart>) => {
             let newProp = `newProp${state.id}`;
-            return {
-                ...stateCopy,
-                chartList: [...state.chartList, {
-                    name: action.name,
-                    isActive: true,
-                    isView: true,
-                    nameEn: newProp,
-                    color: action.color,
-                    type: action.t
-                }],
-                id: stateCopy.id + 1,
-                data: stateCopy.data.map((item, index) => {
-                    if (!Number.isNaN(+action.data[index])) {
-                        item[newProp] = +action.data[index];
-                    }
-                    return item;
-                }),
-                newData: [...stateCopy.newData, {
-                    nameEn: newProp,
-                    data: [...stateCopy.data.map(item => item[newProp])]
-                }]
-            }
-        case DELETE__CHART:
-            return {
-                ...stateCopy,
-                chartList: [...stateCopy.chartList.slice(0, action.id), ...stateCopy.chartList.slice(action.id + 1, stateCopy.chartList.length)]
-            }
-        case EDIT__CHART:
-            return {
-                ...stateCopy,
-                chartList: stateCopy.chartList.map((item, i) => {
-                    if (i === +action.id) {
-                        item.color = action.color;
-                        item.name = action.name;
-                        item.type = action.t;
-                    }
-                    return item;
-                }),
-                data: stateCopy.data.map((item, i) => {
-                    item[stateCopy.chartList[action.id].nameEn] = +action.data[i]
-                    return item;
-                })
-            }
-        case UPDATE__CHART:
-            let days = action.data.forecast.forecastday.map(item => item.day);
-            return {
-                ...stateCopy,
-                data: days.map((item, index) => {
-                    if (stateCopy.newData.length) {
-                        stateCopy.newData.map(i => {
-                            return item[i.nameEn] = i.data[index]
-                        })
-                    }
-                    return item
-                })
-            }
-        default:
-            return stateCopy;
+            state.chartList.push({
+                name: payload.name,
+                isActive: true,
+                isView: true,
+                nameEn: newProp,
+                color: payload.color,
+                type: payload.type
+            })
+            state.id = state.id + 1
+            let dataValues = payload.data.split(',')
+            state.forecastDays.map((item, index) => {
+                if (Number.isNaN(+dataValues[index])) {
+                    return item.day[newProp] = 0
+                }
+                return item.day[newProp] = +dataValues[index]
+            })
+        },
+        deleteChart: (state, { payload }: PayloadAction<number>) => {
+            state.chartList = [...state.chartList.slice(0, payload), ...state.chartList.slice(payload + 1, state.chartList.length)]
+        },
+        editChart: (state, { payload }: PayloadAction<IEditChart>) => {
+            state.chartList[payload.id].color = payload.color
+            state.chartList[payload.id].type = payload.type
+            state.chartList[payload.id].name = payload.name
+            let dataValues = payload.data.split(',')
+            state.forecastDays.map((item, index) => {
+                if (Number.isNaN(+dataValues[index])) {
+                    return item.day[state.chartList[payload.id].nameEn] = 0
+                }
+                return item.day[state.chartList[payload.id].nameEn] = +dataValues[index]
+            })
+        },
+        updateDataChart: (state, { payload }: PayloadAction<number>) => {
+            state.viewCount = payload
+        }
     }
-}
+})
+export const { setForecastDays, toggleViewAccordion, toggleListActive, deleteChart, addNewChart, editChart, updateDataChart } = contentReducer.actions
 
-export default contentReducer;
+export default contentReducer.reducer;

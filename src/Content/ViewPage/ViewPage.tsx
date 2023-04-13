@@ -1,46 +1,42 @@
 import Range from './Range/Range';
-import HighChart from './HighChart/HighChart';
 import AccordionHeader from './AccordionHeader/AccordionHeader';
 import React from 'react';
 import { useTypedSelector } from '../../Hooks/useTypedSelector/useTypedSelector';
+import { IChartList } from '../../store/contentReducer';
+import { Collapse, Layout, Row } from 'antd';
+import './ViewPage.scss'
+const { Panel } = Collapse;
 
-export interface IChartListItem {
-  name: string;
-  nameEn: string;
-  color: string;
-  type: string;
-  isActive?: boolean;
-  isView?: boolean;
-}
+const contentStyle: React.CSSProperties = {
+  textAlign: 'center',
+  minHeight: 120,
+  lineHeight: '120px',
+  color: '#fff',
+  backgroundColor: 'white',
+  maxWidth: '1300px',
+  margin: '0 auto'
+};
 
 function ViewPage() {
   const chartList = useTypedSelector(state => state.content.chartList);
+  return <Layout className='viewPage__layout'>
+    <Layout style={contentStyle} >
 
-  return <div className="viewPage">
-    <div className="container text-center">
-      <div className="row">
-        <div className="col">
-          {chartList.map((item: IChartListItem, index: number) => {
-            return <React.Fragment key={index}>
-              {item.isActive && <div className="accordion">
-                <div className="accordion-item">
-                  <AccordionHeader chart={item} index={index} />
-                  <div className={"accordion-collapse collapse" + (item.isView ? "" : "show")} aria-labelledby="panelsStayOpen-headingOne">
-                    <div className="accordion-body">
-                      <HighChart chart={item} />
-                    </div>
-                  </div>
-                </div>
-              </div>}
-            </React.Fragment>
-          })}
-        </div>
-        <div className="col-3">
-          {chartList.length >0 && <Range />}          
-        </div>
-      </div>
-    </div>
-  </div>
+      {chartList.map((item: IChartList, index: number) => {
+        return <Row gutter={[0, 10]} justify='center' >
+          {item.isActive && <div className="accordion">
+            <AccordionHeader chart={item} index={index} item={item} />
+          </div>}
+        </Row>
+      })}
+
+    </Layout>
+    <Collapse className='viewPage__sider' bordered={false} defaultActiveKey={1}>
+      <Panel header='' key={1} collapsible='header' className='viewPage__panel' forceRender={true}>
+        {chartList.length > 0 && <Range />}
+      </Panel>
+    </Collapse>
+  </Layout>
 }
 
 export default ViewPage;

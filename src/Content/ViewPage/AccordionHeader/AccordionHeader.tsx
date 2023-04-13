@@ -1,21 +1,21 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { toggleViewAccordion } from '../../../store/actions';
-import { IHighChart } from '../HighChart/HighChart';
+import {  toggleViewAccordion } from '../../../store/contentReducer';
+import { useTypedDispatch } from '../../../Hooks/useTypedDispatch';
+import { Collapse } from 'antd';
+import HighChart from '../HighChart/HighChart';
+import { IAccordionHeader } from '../../../types/IAccordionHeader';
+const { Panel } = Collapse;
 
-interface IAccordionHeader extends IHighChart {
-    index: number;
-}
 
-function AccordionHeader({ chart, index }:IAccordionHeader) {
-    const dispatch = useDispatch();
+function AccordionHeader({ chart, index, item }: IAccordionHeader) {
+    const dispatch = useTypedDispatch();
     const toggleAccordion = (index: number) => dispatch(toggleViewAccordion(index))
 
-    return <h2 className="accordion-header" onClick={() => toggleAccordion(index)}>
-        <button className={"accordion-button" + (chart.isView ? " collapsed" : "")} type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
-            {chart.name}
-        </button>
-    </h2>
+    return <Collapse style={{ width: '500px' }} defaultActiveKey={chart.isView ? index: null} onChange={() => toggleAccordion(index)}>
+        <Panel header={chart.name} key={index} >
+            <HighChart chart={item} />
+        </Panel>
+    </Collapse>
 }
 
 export default AccordionHeader;

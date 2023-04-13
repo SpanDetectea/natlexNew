@@ -1,37 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from 'react'
 import './ModalBody.scss'
+import { addNewChart, editChart } from "../../../store/contentReducer";
+import { useTypedDispatch } from "../../../Hooks/useTypedDispatch";
+import { Button, Form, Input, Select } from "antd";
+import { Option } from "antd/es/mentions";
+import { IModalBody } from "../../../types/IModalBody";
 
-interface IModalBody {
-    setChartTitle: (value: string) => void;
-    title: string;
-    data: string;
-    setChartData: (value: string) => void;
-    toggleActiveColor: () => void;
-    setChartColor: (value: string) => void;
-    type: string;
-    setChartType: (value: string) => void;
-    color: string;
-    isActiveColor: boolean;
-}
-
-function ModalBody({ setChartTitle, title, data, setChartData,
-    toggleActiveColor, setChartColor, type,
-    setChartType, color, isActiveColor
-}: IModalBody) {
-    const [firstLabel, setFirstLabel] = useState(false)
-    const [secondLabel, setSecondLabel] = useState(false)
-    const blurHandler = (e) => {
-        switch (e.target.name) {
-            case 'first':
-                setFirstLabel(true)
-                break;
-            case 'second':
-                setSecondLabel(true)
-                break;
-        }
-
-    }
+type RequiredMark = boolean | 'optional';
+function ModalBody({ toggleIsModalVisible, chartValues }: IModalBody) {
     const keyHandler = (event) => {
         if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 ||
             event.keyCode == 27 || event.keyCode == 188 || event.keyCode == 190 ||
@@ -44,41 +21,92 @@ function ModalBody({ setChartTitle, title, data, setChartData,
             }
         }
     }
-    return <div className="modal-body">
+    const [title, setTitle] = useState('')
+    const [color, setColor] = useState('')
+    const [type, setType] = useState('')
+    const [data, setData] = useState('')
+    const [form] = Form.useForm();
+    const [requiredMark, setRequiredMarkType] = useState<RequiredMark>('optional');
+    useEffect(() => {
+        setTitle(chartValues.title)
+        setColor(chartValues.color)
+        setType(chartValues.type)
+        setData(chartValues.data)
+    }, [chartValues])
 
-        <label className="form-label">Chart title</label>
-        <div className="input-group mb-3">
-            <input type="text" name="first" className="form-control" onBlur={blurHandler} aria-describedby="basic-addon3" value={title} onInput={(e) => setChartTitle((e.target as HTMLInputElement).value)} placeholder='my new chart' />
-        </div>
-        {title === '' && firstLabel && <div className="alert alert-danger" role="alert">
-            Incorrect title
-        </div>}
-        <label className="form-label">Data</label>
-        <div className="input-group mb-3">
-            <input type="text" name="second" className="form-control" onBlur={blurHandler} onKeyDown={keyHandler} aria-describedby="basic-addon3" value={data} onInput={(e) => setChartData((e.target as HTMLInputElement).value)} placeholder='1,2,3,4' />
-        </div>
-        {data === '' && secondLabel && <div className="alert alert-danger" role="alert">
-            Incorrect data
-        </div>}
-        <div className="dropdown-center">
-            <button className="btn btn-secondary dropdown-toggle w-25" style={{ backgroundColor: color }} type="button" data-bs-toggle="dropdown" aria-expanded="false" onClick={toggleActiveColor}>
-                Color
-            </button>
-            <ul className={"dropdown-menu" + (isActiveColor ? " show" : "")} onClick={toggleActiveColor}>
-                <li><a className="dropdown-item bg-danger"  onClick={() => setChartColor('#dc3545')}>Red</a></li>
-                <li><a className="dropdown-item bg-primary" onClick={() => setChartColor('#0d6efd')}>Blue</a></li>
-                <li><a className="dropdown-item bg-success" onClick={() => setChartColor('#198754')}>Green</a></li>
-                <li><a className="dropdown-item bg-warning" onClick={() => setChartColor('#ffc107')}>Yellow</a></li>
-            </ul>
-        </div>
-        <div className="btn-group my-2" role="group" aria-label="Базовая группа переключателей радио">
-            <input type="radio" className="btn-check" name="btnradio" id="btnradio1" autoComplete="off" checked={type === 'line' ? true : false} />
-            <label className="btn btn-outline-primary" htmlFor="btnradio1" onClick={() => setChartType('line')}>Line</label>
-            <input type="radio" className="btn-check" name="btnradio" id="btnradio2" autoComplete="off" checked={type === 'column' ? true : false} />
-            <label className="btn btn-outline-primary" htmlFor="btnradio2" onClick={() => setChartType('column')}>Column</label>
-        </div>
-
-    </div>
+    const dispatch = useTypedDispatch();
+    const onRequiredTypeChange = ({ requiredMarkValue }: { requiredMarkValue: RequiredMark }) => {
+        setRequiredMarkType(requiredMarkValue);
+    };
+    const setChartTitle = (value: string) => setTitle(value)
+    const setChartColor = (color: string) => setColor(color)
+    const setChartType = (value: string) => setType(value)
+    const setChartData = (value: string) => setData(value)
+    const addNC = () => {
+        Number.isInteger(chartValues.id) ?
+            dispatch(editChart({
+                id: chartValues.id,
+                name: title,
+                color: color,
+                type: type,
+                data: data
+            })) :
+            dispatch(addNewChart({
+                name: title,
+                color: color,
+                type: type,
+                isActive: true,
+                isView: true,
+                nameEn: '',
+                data: data
+            }))
+        toggleIsModalVisible()
+    }
+   
+    return <Form
+        form={form}
+        layout="vertical"
+        initialValues={{ requiredMarkValue: requiredMark }}
+        onValuesChange={onRequiredTypeChange}
+        requiredMark={requiredMark}
+    >
+        <Form.Item label="Chart title" required tooltip="Enter your chart name">
+            <Input placeholder="my new chart" onInput={(e) => setChartTitle((e.target as HTMLInputElement).value)} value={title} />
+        </Form.Item>
+        <Form.Item
+            label="Data"
+            tooltip="Enter chart data separated by commas"
+        >
+            <Input placeholder="1,2,3,4" onKeyDown={keyHandler} value={data} onInput={(e) => setChartData((e.target as HTMLInputElement).value)} />
+        </Form.Item>
+        <Form.Item>
+            <Select
+                value={color}
+                style={{ width: 80, margin: '0 8px' }}
+                onChange={setChartColor}
+                className="modalBody__color"
+            >
+                <Option value='#dc3545'>Red</Option>
+                <Option value='#0d6efd'>Blue</Option>
+                <Option value='#198754'>Green</Option>
+                <Option value='#ffc107'>Yellow</Option>
+            </Select>
+        </Form.Item>
+        <Form.Item>
+            <Select
+                value={type}
+                style={{ width: 80, margin: '0 8px' }}
+                onChange={setChartType}
+                className="modalBody__color"
+            >
+                <Option value='line'>Line</Option>
+                <Option value='column'>Column</Option>
+            </Select>
+        </Form.Item>
+        <Form.Item>
+            <Button type="primary" onClick={addNC} disabled={(title === '' || data === '' || color === '' || type === '') ? true : false}>Apply</Button>
+        </Form.Item>
+    </Form>
 }
 
 export default ModalBody;

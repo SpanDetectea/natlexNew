@@ -1,27 +1,43 @@
-import React from 'react';
-import {  useEffect } from 'react';
+import React, { useState } from 'react';
+import { useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import './Header.scss'
 import { weatherApi } from '../api/api';
-import { useDispatch} from 'react-redux';
-import { setDataContent } from '../store/actions';
-import { useTypedSelector } from '../Hooks/useTypedSelector/useTypedSelector';
+import { Menu } from 'antd';
+import type { MenuProps } from 'antd';
+import { BarChartOutlined, SettingOutlined } from '@ant-design/icons';
+import { setForecastDays } from '../store/contentReducer';
+import { useTypedDispatch } from '../Hooks/useTypedDispatch';
+
+const items: MenuProps['items'] = [
+  {
+    label: <NavLink to='/view'>Charts</NavLink>,
+    key: '/view',
+    icon: <BarChartOutlined />,
+  },
+  {
+    label: <NavLink to='/settings'>Settings</NavLink>,
+    key: '/settings',
+    icon: <SettingOutlined />,
+  },
+];
 
 function Header() {
-    const location = useLocation();
-    const data = useTypedSelector(state => state.content.data);
+  const dispatch = useTypedDispatch()
+  const location = useLocation()
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await weatherApi.getWeatherData()
+      dispatch(setForecastDays(response))
+    }
+    fetchData()
+  }, [])
+  const [current, setCurrent] = useState(location.pathname);
 
-    const dispatch=useDispatch();
-    useEffect(() => {
-        if (!data.length) {
-            weatherApi.getWeatherData().then(res => dispatch(setDataContent(res)))
-        }
-    }, [])
-
-    return <div className="header btn-group my-4">
-        <NavLink to='/view'><button type="button" className={"btn btn-primary header__button" + (location.pathname === '/view' ? ' activeBtn' : '')}>View Move</button></NavLink>
-        <NavLink to='/settings'><button type="button" className={"btn btn-primary header__button" + (location.pathname === '/settings' ? ' activeBtn' : '')}>Settings</button></NavLink>
-    </div>
+  const onClick: MenuProps['onClick'] = (e) => {
+    setCurrent(e.key);
+  };
+  return <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} className='header'/>
 }
 
 export default Header;

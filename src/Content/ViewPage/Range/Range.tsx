@@ -1,21 +1,21 @@
 import React from "react";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { weatherApi } from "../../../api/api";
-import { updateChart } from "../../../store/actions";
+import { updateDataChart } from "../../../store/contentReducer";
+import { useTypedDispatch } from "../../../Hooks/useTypedDispatch";
+import { useTypedSelector } from "../../../Hooks/useTypedSelector/useTypedSelector";
+import { Slider } from "antd";
 
 function Range() {
-    const [countDay, setCountDay] = useState('7');
-    const dispatch = useDispatch();
-
-    const setDataFromRange = async (e: string) => {
-        setCountDay(e)
-        let res = await weatherApi.getWeatherData('Moscow', e)
-        dispatch(updateChart(res))
+    const initialCountDay = useTypedSelector(state=>state.content.viewCount)
+    const [countDay, setCountDay] = useState(initialCountDay);
+    const dispatch = useTypedDispatch();
+    const setDataFromRange = (e: string) => {
+        dispatch(updateDataChart(+e))
+        setCountDay(+e)
     }
     return <>
-        <label htmlFor="customRange2" className="form-label">number of days from 1 to 7</label>
-        <input type="range" className="form-range" min="1" max="7" id="customRange2" value={countDay} onChange={(e) => setDataFromRange(e.target.value)} />
+    <span>number of days from 1 to 7</span>
+    <Slider value={countDay} max={7} min ={1} onChange={(e) => setDataFromRange(e)}/>
     </>
 }
 

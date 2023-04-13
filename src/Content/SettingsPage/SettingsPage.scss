@@ -1,5 +1,21 @@
 .settings {
     &__list {
         cursor: pointer;
+        border-radius: 10px;
     }
+    &__row {
+        margin-bottom: 20px;
+        &__col {
+            margin: 0 5px;
+        }
+    }
+    max-width: 1000px;
+    margin: 70px auto 0 auto;
+    padding: 0 10px;
+}
+.view {
+    background-color: rgb(88, 160, 88);
+}
+.hidden {
+    background-color: rgb(175, 250, 175);
 }

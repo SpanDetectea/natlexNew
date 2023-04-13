@@ -10,7 +10,7 @@ function App() {
     <div className="App">
       <Header />
       <Routes>
-        <Route path="/settings" element = {<SettingsPage/> }/>
+        <Route path="/settings" element = {<SettingsPage /> }/>
         <Route path="/view" element = {<ViewPage/> }/>
       </Routes>
     </div>

@@ -1,10 +1,3 @@
-.header { 
-    &__button {
-        background: none !important;
-        color: black !important;
-    }
-    .activeBtn {
-        background: #0d6efd !important;
-        color: white !important;
-    }
+.header {
+    display: block;
 }
