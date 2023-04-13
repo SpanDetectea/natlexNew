@@ -1,2 +1,2 @@
 # Get started
-https://spandetectea.github.io/natlex/
+https://spandetectea.github.io/newNatlex
