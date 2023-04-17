@@ -1,17 +1,8 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { Forecastday } from '../types/types';
+import { IAddNEwChart } from '../types/IChartList';
+import { IEditChart } from '../types/IEditChart';
 
-export interface IChartList {
-    name: string
-    isActive: boolean
-    isView: boolean
-    nameEn: string
-    color: string
-    type: string
-}
-export interface IAddNEwChart extends IChartList {
-    data: string
-}
 let initialState = {
     forecastDays: [] as Forecastday[],
     chartList: [
@@ -84,20 +75,12 @@ let initialState = {
     dates: [''],
     viewCount: 7
 }
-interface IEditChart {
-    id: number
-    name: string
-    color: string
-    type: string
-    data: string
-}
 
 const contentReducer = createSlice({
     name: 'content',
     initialState,
     reducers: {
         setForecastDays: (state, { payload }: PayloadAction<Forecastday[]>) => {
-            console.log(payload)
             state.dates = payload.map(item => item.date.slice(5).replace('-', '.'))
             state.forecastDays = [...payload]
         },
@@ -108,7 +91,7 @@ const contentReducer = createSlice({
             state.chartList[payload].isActive = !state.chartList[payload].isActive
         },
         addNewChart: (state, { payload }: PayloadAction<IAddNEwChart>) => {
-            let newProp = `newProp${state.id}`;
+            const newProp = `newProp${state.id}`;
             state.chartList.push({
                 name: payload.name,
                 isActive: true,
@@ -118,8 +101,8 @@ const contentReducer = createSlice({
                 type: payload.type
             })
             state.id = state.id + 1
-            let dataValues = payload.data.split(',')
-            state.forecastDays.map((item, index) => {
+            const dataValues = payload.data.split(',')
+            state.forecastDays.forEach((item, index) => {
                 if (Number.isNaN(+dataValues[index])) {
                     return item.day[newProp] = 0
                 }
@@ -133,8 +116,8 @@ const contentReducer = createSlice({
             state.chartList[payload.id].color = payload.color
             state.chartList[payload.id].type = payload.type
             state.chartList[payload.id].name = payload.name
-            let dataValues = payload.data.split(',')
-            state.forecastDays.map((item, index) => {
+            const dataValues = payload.data.split(',')
+            state.forecastDays.forEach((item, index) => {
                 if (Number.isNaN(+dataValues[index])) {
                     return item.day[state.chartList[payload.id].nameEn] = 0
                 }

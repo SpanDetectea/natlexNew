@@ -1,4 +1,4 @@
-import { IChartList } from "../store/contentReducer"
+import { IChartList } from "./IChartList"
 
 export interface IAccordionHeader {
     chart: IChartList
